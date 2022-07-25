@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -23,8 +24,21 @@ class _SyncState extends State<Sync> {
   }
 
   generate() {
-    var rng = Random();
-    count = count + 7; // 7 for checking
+    Timer.periodic(Duration(seconds: 1), (Timer t) {
+      var rng = Random();
+      count = count + rng.nextInt(10); // 7 for checking
+      print(count);
+      now = (count / 60).floor();
+      if (now == prev) {
+        chartData.add(ChartData(count, rng.nextInt(20)));
+      } else {
+        chartData.clear();
+        chartData.add(ChartData(0, 0));
+      }
+      setState(() {
+        prev = now;
+      });
+    });
 
     // if (count % 60 == 0) {
     //   chartData.clear();
@@ -32,18 +46,6 @@ class _SyncState extends State<Sync> {
     // } else {
     //   chartData.add(ChartData(count, rng.nextInt(20)));
     // }
-
-    print(count);
-    now = (count / 60).floor();
-    if (now == prev) {
-      chartData.add(ChartData(count, rng.nextInt(20)));
-    } else {
-      chartData.clear();
-      chartData.add(ChartData(0, 0));
-    }
-    setState(() {
-      prev = now;
-    });
   }
 
   num plot(x) {
